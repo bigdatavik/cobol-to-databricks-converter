@@ -125,7 +125,7 @@ MAX_TOKENS = int(os.getenv("MAX_TOKENS", "8000"))  # Configurable via app.yaml
 def load_instructions():
     """Load COBOL assistant instructions from app bundle"""
     # Load from app bundle (deployed with the app)
-    instructions_path = os.path.join(os.path.dirname(__file__), "config", ".assistant_instructions_cobol.md")
+    instructions_path = os.path.join(os.path.dirname(__file__), "config", ".assistant_instructions.md")
     
     try:
         with open(instructions_path, 'r') as f:
