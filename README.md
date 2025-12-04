@@ -59,7 +59,12 @@ This creates demo catalogs, data, volume, and uploads COBOL files:
 ```bash
 ./setup_databricks_assistant.sh
 ```
-**Time:** ~10 minutes | **Creates:** 2 catalogs (vikcbl_payer_dev, vikcbl_payer_analyst_dev), 42K rows of data, 6 COBOL files
+**Time:** ~10 minutes | **Creates:** 2 catalogs with **your** prefix (e.g., `vikcbl_payer_dev` for vik.malhotra@..., `johncbl_payer_dev` for john.smith@...), 42K rows of data, 6 COBOL files
+
+**📝 Note:** Catalog names are **dynamically generated** from your email:
+- Format: `{firstname}cbl_payer_dev` and `{firstname}cbl_payer_analyst_dev`
+- Example: `vik.malhotra@databricks.com` → `vikcbl_payer_dev`
+- Example: `jane.doe@company.com` → `janecbl_payer_dev`
 
 **4️⃣ Deploy the Streamlit App**
 ```bash
@@ -79,6 +84,7 @@ The script will show you a **big reminder box** at the end:
 
 The deploy script outputs SQL commands. Copy them to **Databricks SQL Editor** and run:
 
+**Example** (your actual commands will have YOUR catalog names and UUID):
 ```sql
 GRANT USE CATALOG ON CATALOG vikcbl_payer_dev TO `<auto-detected-uuid>`;
 GRANT USE SCHEMA ON SCHEMA vikcbl_payer_dev.cobol_migration TO `<auto-detected-uuid>`;
@@ -88,14 +94,17 @@ GRANT USE CATALOG ON CATALOG vikcbl_payer_analyst_dev TO `<auto-detected-uuid>`;
 GRANT SELECT ON CATALOG vikcbl_payer_analyst_dev TO `<auto-detected-uuid>`;
 ```
 
+**💡 Note:** Replace `vikcbl` with **your** prefix (e.g., `johncbl` if you're john.smith@...). The script shows the exact commands for YOUR catalogs.
+
 **💡 Tip:** Run `./show_grant_commands.sh` anytime to regenerate these commands with your app's UUID.
 
 **6️⃣ Access Your App**
 
 Open the app URL shown in the deploy output:
 ```
-https://vikcbl-cobol-converter-<workspace-id>.azuredatabricksapps.com
+https://{yourprefix}cbl-cobol-converter-<workspace-id>.azuredatabricksapps.com
 ```
+Example: `https://vikcbl-cobol-converter-984752964297111.11.azure.databricksapps.com`
 
 **✅ You're Done!** Start converting COBOL code to PySpark/SQL.
 
@@ -285,11 +294,13 @@ This deploys `.assistant_instructions.md` to your workspace folder (`/Workspace/
 ## Usage Example
 
 1. **Upload COBOL File**: Click "Browse files" or paste COBOL code
-2. **Configure**: Set source/target catalogs and schemas (defaults to vikcbl_payer_dev)
+2. **Configure**: Set source/target catalogs and schemas (defaults to **your** catalogs: `{yourname}cbl_payer_dev`)
 3. **Select Mode**: Choose PySpark or SQL output
 4. **Convert**: Click "Convert to Databricks"
 5. **Download**: Save as `.py` notebook file
 6. **Deploy**: Upload to Databricks workspace
+
+**💡 Tip:** All examples in this README use `vikcbl` as the prefix. When YOU run the setup, replace `vikcbl` with your actual prefix (first name from email + "cbl").
 
 ---
 
