@@ -44,7 +44,6 @@ tmp/
 
 # Personal files - not for public release
 MY_ENVIRONMENT.md
-_SAS_MASTER_TEMPLATE.md
 config_example_*.json
 
 # Archives and backups
@@ -68,12 +67,8 @@ LINKEDIN_POST.md
 # Internal process documentation
 MAIN_BRANCH_READY.md
 
-# Archive folder - old versions of files
-archive/
-
 # Auto-generated grant commands (created by show_grant_commands.sh)
 grant_commands.sql
 
 # Test/cleanup scripts
 notebooks/cleanup_target_schemas.py
-notebooks/test_sas_conversion_with_fm.py

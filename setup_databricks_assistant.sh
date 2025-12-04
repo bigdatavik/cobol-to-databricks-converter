@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# SAS to Databricks Payer Migration Demo
+# COBOL to Databricks Payer Migration Demo
 # One-Command Clean, Deploy & Setup Script
 
 set -e  # Exit on error
@@ -40,7 +40,7 @@ echo ""
 #=============================================================================
 
 echo "╔════════════════════════════════════════════════════════════════╗"
-echo "║  SAS to Databricks Payer Migration Demo - Reset & Deploy      ║"
+echo "║  COBOL to Databricks Payer Migration Demo - Reset & Deploy    ║"
 echo "╚════════════════════════════════════════════════════════════════╝"
 echo ""
 
@@ -89,22 +89,22 @@ echo "🚀 Step 4/4: Running setup (DROP CASCADE + CREATE + LOAD DATA)..."
 echo "   This will:"
 echo "   - 🗑️  Drop existing payer_dev and payer_analyst_dev catalogs"
 echo "   - 📦 Create fresh catalogs and schemas"
-echo "   - 📊 Load 29,000 rows of sample data"
+echo "   - 📊 Load 42,000 rows of sample data"
 echo ""
 
-if databricks bundle run setup_payer_demo --profile $PROFILE; then
+if databricks bundle run setup_cobol_demo --profile $PROFILE; then
     echo ""
     
-    # Upload SAS files to volume
-    echo "📦 Uploading SAS files to volume..."
-    cd "$(dirname "$0")/legacy_sas"
+    # Upload COBOL files to volume
+    echo "📦 Uploading COBOL files to volume..."
+    cd "$(dirname "$0")/legacy_cobol"
     UPLOAD_COUNT=0
-    for file in *.sas; do
-        if databricks fs cp "$file" "dbfs:/Volumes/payer_dev/sas_migration/legacy_sas/$file" --profile $PROFILE --overwrite 2>/dev/null; then
+    for file in *.cbl; do
+        if databricks fs cp "$file" "dbfs:/Volumes/payer_dev/cobol_migration/legacy_cobol/$file" --profile $PROFILE --overwrite 2>/dev/null; then
             UPLOAD_COUNT=$((UPLOAD_COUNT + 1))
         fi
     done
-    echo "✅ Uploaded $UPLOAD_COUNT SAS files to volume"
+    echo "✅ Uploaded $UPLOAD_COUNT COBOL files to volume"
     cd -  > /dev/null
     echo ""
     
@@ -113,26 +113,26 @@ if databricks bundle run setup_payer_demo --profile $PROFILE; then
     echo "╚════════════════════════════════════════════════════════════════╝"
     echo ""
     echo "📊 Catalogs created:"
-    echo "   ✅ payer_dev (source - with 29,000 rows)"
+    echo "   ✅ payer_dev (source - with 42,000 rows)"
     echo "   ✅ payer_analyst_dev (target)"
     echo ""
     echo "📂 Schemas created:"
-    echo "   Source: claims_bronze, claims_silver, analytics_gold, sas_migration"
+    echo "   Source: claims_bronze, claims_silver, analytics_gold, cobol_migration"
     echo "   Target: hedis_reports, risk_adjustment, claims_analytics,"
     echo "           provider_analytics, member_analytics, prior_auth_analytics"
     echo ""
     echo "📦 Volume created:"
-    echo "   ✅ payer_dev.sas_migration.legacy_sas (with $UPLOAD_COUNT SAS files)"
+    echo "   ✅ payer_dev.cobol_migration.legacy_cobol (with $UPLOAD_COUNT COBOL files)"
     echo ""
     echo "🎬 Ready to demo!"
     echo ""
     echo "🔗 Quick links:"
     echo "   Workspace: https://adb-984752964297111.11.azuredatabricks.net"
-    echo "   Demo notebooks: /.bundle/sas-payer-migration-demo/dev/files/notebooks/"
+    echo "   Demo notebooks: /.bundle/cobol-migration-demo/dev/files/notebooks/"
     echo ""
     echo "📖 Next steps:"
-    echo "   1. Open demo notebook: 01_hedis_pyspark"
-    echo "   2. Test Assistant conversion with SAS code"
+    echo "   1. Open demo notebook: 01_cobol_hedis_pyspark"
+    echo "   2. Test Assistant conversion with COBOL code"
     echo "   3. See DEMO_SCRIPT.md for full presentation guide"
     echo ""
 else

@@ -10,9 +10,13 @@
 
 # COMMAND ----------
 
-# Configuration widgets with vikcbl defaults
-dbutils.widgets.text("source_catalog", "vikcbl_payer_dev")
-dbutils.widgets.text("target_catalog", "vikcbl_payer_analyst_dev")
+# Configuration - Extract user prefix with "cbl" suffix for COBOL
+current_user = spark.sql("SELECT current_user() as user").collect()[0]["user"]
+user_prefix = current_user.split('@')[0].split('.')[0].lower() + "cbl"
+
+# Configuration widgets with dynamic defaults
+dbutils.widgets.text("source_catalog", f"{user_prefix}_payer_dev")
+dbutils.widgets.text("target_catalog", f"{user_prefix}_payer_analyst_dev")
 
 SOURCE_CATALOG = dbutils.widgets.get("source_catalog")
 TARGET_CATALOG = dbutils.widgets.get("target_catalog")
@@ -65,10 +69,10 @@ print(f"✅ Target: {TARGET_CATALOG}")
 # 🎯 LIVE DEMO: Paste COBOL code here and invoke Assistant (Cmd+I)
 #
 # Expected conversion:
-# - Join vikcbl_payer_dev.analytics_gold.claims with providers
+# - Join {SOURCE_CATALOG}.analytics_gold.claims with providers
 # - Filter denied claims from 2023
 # - Group by provider and procedure
-# - Write to vikcbl_payer_analyst_dev.claims_analytics.denied_claims_report
+# - Write to {TARGET_CATALOG}.claims_analytics.denied_claims_report
 
 # [PASTE COBOL CODE HERE AND INVOKE ASSISTANT]
 

@@ -48,8 +48,8 @@ echo "📋 Reading configuration from databricks.yml..."
 SOURCE_CATALOG=$(grep -A2 "source_catalog:" databricks.yml | grep "default:" | awk '{print $2}' || echo "payer_dev")
 TARGET_CATALOG=$(grep -A2 "target_catalog:" databricks.yml | grep "default:" | awk '{print $2}' || echo "payer_analyst_dev")
 VOLUME_CATALOG=$(grep -A2 "volume_catalog:" databricks.yml | grep "default:" | awk '{print $2}' || echo "payer_dev")
-VOLUME_SCHEMA=$(grep -A2 "volume_schema:" databricks.yml | grep "default:" | awk '{print $2}' || echo "sas_migration")
-VOLUME_NAME=$(grep -A2 "volume_name:" databricks.yml | grep "default:" | awk '{print $2}' || echo "legacy_sas")
+VOLUME_SCHEMA=$(grep -A2 "volume_schema:" databricks.yml | grep "default:" | awk '{print $2}' || echo "cobol_migration")
+VOLUME_NAME=$(grep -A2 "volume_name:" databricks.yml | grep "default:" | awk '{print $2}' || echo "legacy_cobol")
 
 echo "   Source catalog: $SOURCE_CATALOG"
 echo "   Target catalog: $TARGET_CATALOG"
@@ -82,8 +82,8 @@ echo ""
 
 # Step 2: Redeploy app (picks up new instructions)
 echo "🚀 Step 2/4: Redeploying app..."
-databricks apps deploy sas-converter \
-  --source-code-path /Workspace/Users/$DATABRICKS_USER/.bundle/sas-payer-migration-demo/dev/files/dashboard \
+databricks apps deploy cobol-converter \
+  --source-code-path /Workspace/Users/$DATABRICKS_USER/.bundle/cobol-migration-demo/dev/files/dashboard \
   --profile $PROFILE
 echo "✅ App redeployed"
 echo ""
@@ -91,7 +91,7 @@ echo ""
 echo "🔐 Step 3/4: App permissions setup required..."
 
 # Get app service principal UUID (client_id)
-APP_NAME="sas-converter"
+APP_NAME="cobol-converter"
 APP_JSON=$(databricks apps get $APP_NAME --profile $PROFILE --output json 2>/dev/null)
 
 if [ $? -eq 0 ] && [ -n "$APP_JSON" ]; then
@@ -107,9 +107,9 @@ if [ $? -eq 0 ] && [ -n "$APP_JSON" ]; then
         echo ""
         echo "   Or copy these commands to SQL Editor:"
         echo "   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-        echo "   GRANT USE CATALOG ON CATALOG payer_dev TO \`$APP_SP_UUID\`;"
-        echo "   GRANT USE SCHEMA ON SCHEMA payer_dev.sas_migration TO \`$APP_SP_UUID\`;"
-        echo "   GRANT READ VOLUME ON VOLUME payer_dev.sas_migration.legacy_sas TO \`$APP_SP_UUID\`;"
+        echo "   GRANT USE CATALOG ON CATALOG $VOLUME_CATALOG TO \`$APP_SP_UUID\`;"
+        echo "   GRANT USE SCHEMA ON SCHEMA $VOLUME_CATALOG.$VOLUME_SCHEMA TO \`$APP_SP_UUID\`;"
+        echo "   GRANT READ VOLUME ON VOLUME $VOLUME_CATALOG.$VOLUME_SCHEMA.$VOLUME_NAME TO \`$APP_SP_UUID\`;"
         echo "   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     else
         echo "⚠️  Could not detect service principal UUID"
@@ -138,10 +138,10 @@ echo ""
 echo "📋 Run these SQL commands in Databricks SQL Editor:"
 echo ""
 if [ -n "$APP_SP_UUID" ]; then
-    echo "   GRANT USE CATALOG ON CATALOG payer_dev TO \`$APP_SP_UUID\`;"
-    echo "   GRANT USE SCHEMA ON SCHEMA payer_dev.sas_migration TO \`$APP_SP_UUID\`;"
-    echo "   GRANT READ VOLUME ON VOLUME payer_dev.sas_migration.legacy_sas TO \`$APP_SP_UUID\`;"
-    echo "   GRANT SELECT ON CATALOG payer_dev TO \`$APP_SP_UUID\`;"
+    echo "   GRANT USE CATALOG ON CATALOG $VOLUME_CATALOG TO \`$APP_SP_UUID\`;"
+    echo "   GRANT USE SCHEMA ON SCHEMA $VOLUME_CATALOG.$VOLUME_SCHEMA TO \`$APP_SP_UUID\`;"
+    echo "   GRANT READ VOLUME ON VOLUME $VOLUME_CATALOG.$VOLUME_SCHEMA.$VOLUME_NAME TO \`$APP_SP_UUID\`;"
+    echo "   GRANT SELECT ON CATALOG $VOLUME_CATALOG TO \`$APP_SP_UUID\`;"
     echo ""
     echo "   💾 Commands saved to: grant_commands.sql"
     echo "   📖 Full list: ./show_grant_commands.sh"

@@ -90,10 +90,10 @@ try:
     w = WorkspaceClient()
     current_user = w.current_user.me()
     username = current_user.user_name
-    user_prefix = os.getenv("USER_PREFIX", username.split('@')[0].split('.')[0].lower())
+    user_prefix = os.getenv("USER_PREFIX", username.split('@')[0].split('.')[0].lower() + "cbl")
 except:
     username = "app-user"
-    user_prefix = "default"
+    user_prefix = "defaultcbl"
 
 # Get token for Foundation Models API
 # For OpenAI client, we need an actual string token
@@ -141,8 +141,8 @@ def load_instructions():
             return """# COBOL to Databricks Migration Instructions
 
 ## Environment
-- Source: vikcbl_payer_dev.analytics_gold.*
-- Target: vikcbl_payer_analyst_dev
+- Source: {user_prefix}_payer_dev.analytics_gold.*
+- Target: {user_prefix}_payer_analyst_dev
 
 Use 3-level namespace for all table references.
 Follow snake_case naming conventions.

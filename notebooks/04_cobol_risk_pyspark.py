@@ -10,9 +10,13 @@
 
 # COMMAND ----------
 
-# Configuration widgets with vikcbl defaults
-dbutils.widgets.text("source_catalog", "vikcbl_payer_dev")
-dbutils.widgets.text("target_catalog", "vikcbl_payer_analyst_dev")
+# Configuration - Extract user prefix with "cbl" suffix for COBOL
+current_user = spark.sql("SELECT current_user() as user").collect()[0]["user"]
+user_prefix = current_user.split('@')[0].split('.')[0].lower() + "cbl"
+
+# Configuration widgets with dynamic defaults
+dbutils.widgets.text("source_catalog", f"{user_prefix}_payer_dev")
+dbutils.widgets.text("target_catalog", f"{user_prefix}_payer_analyst_dev")
 
 SOURCE_CATALOG = dbutils.widgets.get("source_catalog")
 TARGET_CATALOG = dbutils.widgets.get("target_catalog")
@@ -82,7 +86,7 @@ print(f"✅ Target: {TARGET_CATALOG}")
 # - Aggregations
 # - Case/When conditionals
 #
-# Expected: PySpark code with vikcbl_payer_dev → vikcbl_payer_analyst_dev
+# Expected: PySpark code with {SOURCE_CATALOG} → {TARGET_CATALOG}
 
 # [PASTE COBOL CODE HERE AND INVOKE ASSISTANT]
 

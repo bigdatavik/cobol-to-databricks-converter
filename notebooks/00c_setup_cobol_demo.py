@@ -15,7 +15,7 @@ import random
 current_user = spark.sql("SELECT current_user() as user").collect()[0]["user"]
 user_prefix = current_user.split('@')[0].split('.')[0].lower() + "cbl"
 
-# Create widgets with vikcbl prefixed defaults
+# Create widgets with dynamic defaults (e.g., vikcbl for vik.malhotra)
 dbutils.widgets.text("source_catalog", f"{user_prefix}_payer_dev")
 dbutils.widgets.text("target_catalog", f"{user_prefix}_payer_analyst_dev")
 

@@ -7,13 +7,17 @@
 # MAGIC 1. See legacy COBOL code below (from mainframe)
 # MAGIC 2. Copy the COBOL code
 # MAGIC 3. Paste into the empty cell and invoke Databricks Assistant (Cmd+I or Ctrl+I)
-# MAGIC 4. Watch AI convert COBOL → PySpark using vikcbl catalogs!
+# MAGIC 4. Watch AI convert COBOL → PySpark using your catalogs!
 
 # COMMAND ----------
 
-# Configuration widgets with vikcbl defaults
-dbutils.widgets.text("source_catalog", "vikcbl_payer_dev")
-dbutils.widgets.text("target_catalog", "vikcbl_payer_analyst_dev")
+# Configuration - Extract user prefix with "cbl" suffix for COBOL
+current_user = spark.sql("SELECT current_user() as user").collect()[0]["user"]
+user_prefix = current_user.split('@')[0].split('.')[0].lower() + "cbl"
+
+# Configuration widgets with dynamic defaults
+dbutils.widgets.text("source_catalog", f"{user_prefix}_payer_dev")
+dbutils.widgets.text("target_catalog", f"{user_prefix}_payer_analyst_dev")
 
 SOURCE_CATALOG = dbutils.widgets.get("source_catalog")
 TARGET_CATALOG = dbutils.widgets.get("target_catalog")
@@ -76,13 +80,13 @@ print(f"✅ Target: {TARGET_CATALOG}")
 #
 # 1. Copy the COBOL code from the markdown cell above
 # 2. Paste it into this cell
-# 3. Add comment: "Convert this COBOL to PySpark using vikcbl_payer_dev catalogs"
+# 3. Add comment: "Convert this COBOL to PySpark using my catalogs"
 # 4. Invoke Databricks Assistant (Cmd+I or Ctrl+I)
 # 5. Watch AI generate PySpark code!
 #
 # Expected output:
-# - Reads from: vikcbl_payer_dev.analytics_gold.hedis_measures
-# - Writes to: vikcbl_payer_analyst_dev.hedis_reports.bcs_summary
+# - Reads from: {SOURCE_CATALOG}.analytics_gold.hedis_measures
+# - Writes to: {TARGET_CATALOG}.hedis_reports.bcs_summary
 # - Uses catalog variables from widgets
 
 # [PASTE COBOL CODE HERE AND INVOKE ASSISTANT]

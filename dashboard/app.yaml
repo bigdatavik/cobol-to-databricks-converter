@@ -1,4 +1,4 @@
-command: ["streamlit", "run", "sas_converter_app.py"]
+command: ["streamlit", "run", "cobol_converter_app.py"]
 
 env:
   # Databricks workspace hostname
@@ -22,3 +22,39 @@ env:
   # Default: 8000 (good for most conversions)
   - name: "MAX_TOKENS"
     value: "8000"
+
+  # User prefix for resource naming (will be vikcbl for user vik.malhotra)
+  - name: "USER_PREFIX"
+    value: "vikcbl" # USER_PREFIX
+
+  # Source catalog with existing gold tables from mainframe
+  - name: "SOURCE_CATALOG"
+    value: "vikcbl_payer_dev" # SOURCE_CATALOG
+
+  # Target catalog for converted COBOL→PySpark analytical outputs
+  - name: "TARGET_CATALOG"
+    value: "vikcbl_payer_analyst_dev" # TARGET_CATALOG
+
+  # Default schema in source catalog
+  - name: "SOURCE_SCHEMA"
+    value: "analytics_gold"
+
+  # Default schema in target catalog
+  - name: "TARGET_SCHEMA"
+    value: "default"
+
+  # Volume catalog for browsing COBOL files
+  - name: "VOLUME_CATALOG"
+    value: "vikcbl_payer_dev"
+
+  # Volume schema
+  - name: "VOLUME_SCHEMA"
+    value: "cobol_migration"
+
+  # Volume name containing legacy COBOL files
+  - name: "VOLUME_NAME"
+    value: "legacy_cobol"
+
+  # Legacy language identifier (for UI display)
+  - name: "LEGACY_LANGUAGE"
+    value: "COBOL"

@@ -10,9 +10,13 @@
 
 # COMMAND ----------
 
-# Configuration widgets with vikcbl defaults
-dbutils.widgets.text("source_catalog", "vikcbl_payer_dev")
-dbutils.widgets.text("target_catalog", "vikcbl_payer_analyst_dev")
+# Configuration - Extract user prefix with "cbl" suffix for COBOL
+current_user = spark.sql("SELECT current_user() as user").collect()[0]["user"]
+user_prefix = current_user.split('@')[0].split('.')[0].lower() + "cbl"
+
+# Configuration widgets with dynamic defaults
+dbutils.widgets.text("source_catalog", f"{user_prefix}_payer_dev")
+dbutils.widgets.text("target_catalog", f"{user_prefix}_payer_analyst_dev")
 
 SOURCE_CATALOG = dbutils.widgets.get("source_catalog")
 TARGET_CATALOG = dbutils.widgets.get("target_catalog")
@@ -64,12 +68,12 @@ print(f"✅ Target: {TARGET_CATALOG}")
 
 # 🎯 LIVE DEMO: Paste COBOL code here and invoke Assistant (Cmd+I)
 #
-# Ask Assistant: "Convert this COBOL to Spark SQL using vikcbl catalogs"
+# Ask Assistant: "Convert this COBOL to Spark SQL using my catalogs"
 #
 # Expected output:
-# - SQL query reading vikcbl_payer_dev.analytics_gold.members
+# - SQL query reading {SOURCE_CATALOG}.analytics_gold.members
 # - Window functions for running totals
-# - Creates view/table in vikcbl_payer_analyst_dev.member_analytics
+# - Creates view/table in {TARGET_CATALOG}.member_analytics
 
 # [PASTE COBOL CODE HERE AND INVOKE ASSISTANT]
 
