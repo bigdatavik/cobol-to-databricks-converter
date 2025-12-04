@@ -1,0 +1,82 @@
+# Databricks Asset Bundle Configuration
+# COBOL to Databricks Payer Migration Demo
+# This project demonstrates how Assistant Instructions accelerate COBOL code migration
+
+bundle:
+  name: ${var.user_prefix}-cobol-migration-demo
+
+variables:
+  user_prefix:
+    description: User prefix to avoid naming conflicts in shared workspace (scripts add 'cbl' suffix)
+    default: user
+
+  source_catalog:
+    description: Source catalog for COBOL data with existing gold tables
+    default: ${var.user_prefix}_payer_dev
+
+  target_catalog:
+    description: Target catalog for converted COBOL→PySpark analytical outputs
+    default: ${var.user_prefix}_payer_analyst_dev
+
+  # Volume configuration for COBOL source files
+  volume_catalog:
+    description: Catalog containing COBOL files volume
+    default: ${var.user_prefix}_payer_dev
+
+  volume_schema:
+    description: Schema for COBOL migration files
+    default: cobol_migration
+
+  volume_name:
+    description: Volume name for legacy COBOL files
+    default: legacy_cobol
+
+  cluster_id:
+    description: Cluster ID for running notebooks (optional - can use serverless)
+    default: "0304-162117-qgsi1x04"
+
+workspace:
+  host: https://adb-984752964297111.11.azuredatabricks.net
+  profile: DEFAULT_azure
+
+targets:
+  dev:
+    mode: development
+    default: true
+    workspace:
+      root_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/dev
+      file_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/dev/files
+
+# Sync files to Databricks workspace
+sync:
+  include:
+    - config/**
+    - legacy_cobol/**
+    - notebooks/**
+    - dashboard/**
+
+# Deploy the assistant instructions file
+# Note: config/ folder is synced to bundle directory (reference copy)
+#       The script also deploys .assistant_instructions.md to user home directory:
+#       /Workspace/Users/vik.malhotra@databricks.com/.assistant_instructions.md
+#       This is where Databricks Assistant automatically reads instructions.
+resources:
+  apps:
+    cobol_converter:
+      name: "${var.user_prefix}-cobol-converter"
+      description: "COBOL to Databricks Code Converter for Healthcare Payer Analytics"
+      source_code_path: ./dashboard
+
+  jobs:
+    setup_cobol_demo:
+      name: "[${bundle.target}] ${var.user_prefix} Setup COBOL Migration Demo"
+      tasks:
+        - task_key: setup_catalogs_and_data
+          notebook_task:
+            notebook_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/dev/files/notebooks/00c_setup_cobol_demo
+            source: WORKSPACE
+            base_parameters:
+              source_catalog: ${var.source_catalog}
+              target_catalog: ${var.target_catalog}
+              user_prefix: ${var.user_prefix}
+          existing_cluster_id: ${var.cluster_id}

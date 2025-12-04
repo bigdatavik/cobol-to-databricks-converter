@@ -1,0 +1,24 @@
+command: ["streamlit", "run", "sas_converter_app.py"]
+
+env:
+  # Databricks workspace hostname
+  - name: "DATABRICKS_HOST"
+    value: "adb-984752964297111.11.azuredatabricks.net"
+
+  # Foundation Model API endpoint name
+  # To switch models, change this value to your endpoint name
+  # Examples:
+  #   - "databricks-claude-sonnet-4-5" (BEST for SQL - switch back if rate limits ok)
+  #   - "databricks-meta-llama-3-3-70b-instruct" (current - good for PySpark, weaker for SQL)
+  #   - "databricks-meta-llama-3-1-8b-instruct" (highest rate limits, lower quality)
+  #   - "databricks-dbrx-instruct"
+  #   - Your custom provisioned throughput endpoint
+  - name: "SERVING_ENDPOINT_NAME"
+    value: "databricks-claude-sonnet-4-5"
+
+  # Maximum tokens per conversion (controls output length)
+  # Lower values = faster, cheaper, but may truncate long code
+  # Higher values = complete code, but uses more tokens
+  # Default: 8000 (good for most conversions)
+  - name: "MAX_TOKENS"
+    value: "8000"

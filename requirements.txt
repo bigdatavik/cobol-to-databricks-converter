@@ -1,0 +1,21 @@
+# Core Databricks Dependencies
+databricks-sdk>=0.18.0
+databricks-cli>=0.18.0
+
+# Python Basics
+pandas>=2.0.0
+numpy>=1.24.0
+
+# Development Tools
+black>=23.0.0
+flake8>=6.0.0
+pytest>=7.0.0
+
+# Jupyter (if needed for notebooks)
+ipykernel>=6.0.0
+jupyter>=1.0.0
+
+# Add project-specific dependencies below:
+
+# Note: For the Streamlit conversion web app, see: app_requirements.txt
+# Install app dependencies separately: pip install -r app_requirements.txt

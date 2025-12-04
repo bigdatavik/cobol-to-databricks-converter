@@ -1,0 +1,79 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+*.egg-info/
+dist/
+build/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Databricks
+.databricks/
+
+# Local development
+*.log
+.env
+.envrc
+
+# Test outputs
+test_output/
+*.test
+
+# Temporary files
+*.tmp
+tmp/
+
+# Personal files - not for public release
+MY_ENVIRONMENT.md
+_SAS_MASTER_TEMPLATE.md
+config_example_*.json
+
+# Archives and backups
+archive/
+backups/
+
+# Old modular app code
+dashboard/app/
+
+# Development notes
+dashboard/COMPREHENSIVE_RULES_ANALYSIS.md
+dashboard/MODEL_CONFIG.md
+dashboard/config/README.md
+dashboard/config/VERSION_TRACKING_GUIDE.md
+GITHUB_CLEANUP_COMPLETE.md
+
+# Work in progress - exclude for now
+AUTOMATED_TESTING_GUIDE.md
+LINKEDIN_POST.md
+
+# Internal process documentation
+MAIN_BRANCH_READY.md
+
+# Archive folder - old versions of files
+archive/
+
+# Auto-generated grant commands (created by show_grant_commands.sh)
+grant_commands.sql
+
+# Test/cleanup scripts
+notebooks/cleanup_target_schemas.py
+notebooks/test_sas_conversion_with_fm.py
