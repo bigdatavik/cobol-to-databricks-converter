@@ -63,12 +63,16 @@ GITHUB_CLEANUP_COMPLETE.md
 # Work in progress - exclude for now
 AUTOMATED_TESTING_GUIDE.md
 LINKEDIN_POST.md
+MAIN_BRANCH_READY.md
 
 # Internal process documentation
-MAIN_BRANCH_READY.md
+
 
 # Auto-generated grant commands (created by show_grant_commands.sh)
 grant_commands.sql
 
 # Test/cleanup scripts
 notebooks/cleanup_target_schemas.py
+
+# Reference templates (not for deployment)
+DATA_QUALITY_VALIDATION_TEMPLATE.md
