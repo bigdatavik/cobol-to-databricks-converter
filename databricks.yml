@@ -7,21 +7,21 @@ bundle:
 
 variables:
   user_prefix:
-    description: User prefix to avoid naming conflicts in shared workspace (scripts add 'cbl' suffix)
-    default: user
+    description: User prefix to avoid naming conflicts in shared workspace (for COBOL, use firstname+cbl, e.g., vikcbl)
+    default: vikcbl
 
   source_catalog:
     description: Source catalog for COBOL data with existing gold tables
-    default: ${var.user_prefix}_payer_dev
+    default: vikcbl_payer_dev
 
   target_catalog:
     description: Target catalog for converted COBOL→PySpark analytical outputs
-    default: ${var.user_prefix}_payer_analyst_dev
+    default: vikcbl_payer_analyst_dev
 
   # Volume configuration for COBOL source files
   volume_catalog:
     description: Catalog containing COBOL files volume
-    default: ${var.user_prefix}_payer_dev
+    default: vikcbl_payer_dev
 
   volume_schema:
     description: Schema for COBOL migration files
