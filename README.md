@@ -1,6 +1,6 @@
-# SAS to Databricks Converter
+# COBOL to Databricks Converter
 
-A production-ready Streamlit application that converts legacy SAS code to PySpark or Databricks SQL using Databricks Foundation Models (Claude Sonnet 4.5).
+A production-ready Streamlit application that converts legacy COBOL mainframe code to PySpark or Databricks SQL using Databricks Foundation Models (Claude Sonnet 4.5).
 
 ![Version](https://img.shields.io/badge/version-2.4-blue)
 ![Python](https://img.shields.io/badge/python-3.10+-green)
@@ -40,8 +40,8 @@ A production-ready Streamlit application that converts legacy SAS code to PySpar
 
 **1️⃣ Clone the Repository**
 ```bash
-git clone <your-repo-url>
-cd SAS-work
+git clone https://github.com/bigdatavik/cobol-to-databricks-converter.git
+cd cobol_converter
 ```
 
 **2️⃣ Configure Databricks CLI**
@@ -55,11 +55,11 @@ export DATABRICKS_PROFILE="your_profile_name"
 
 **3️⃣ Run Full Setup (First Time Only)**
 
-This creates demo catalogs, data, volume, and uploads SAS files:
+This creates demo catalogs, data, volume, and uploads COBOL files:
 ```bash
 ./setup_databricks_assistant.sh
 ```
-**Time:** ~10 minutes | **Creates:** 2 catalogs, 29K rows of data, 6 SAS files
+**Time:** ~10 minutes | **Creates:** 2 catalogs (vikcbl_payer_dev, vikcbl_payer_analyst_dev), 42K rows of data, 6 COBOL files
 
 **4️⃣ Deploy the Streamlit App**
 ```bash
@@ -80,10 +80,12 @@ The script will show you a **big reminder box** at the end:
 The deploy script outputs SQL commands. Copy them to **Databricks SQL Editor** and run:
 
 ```sql
-GRANT USE CATALOG ON CATALOG payer_dev TO `<auto-detected-uuid>`;
-GRANT USE SCHEMA ON SCHEMA payer_dev.sas_migration TO `<auto-detected-uuid>`;
-GRANT READ VOLUME ON VOLUME payer_dev.sas_migration.legacy_sas TO `<auto-detected-uuid>`;
-GRANT SELECT ON CATALOG payer_dev TO `<auto-detected-uuid>`;
+GRANT USE CATALOG ON CATALOG vikcbl_payer_dev TO `<auto-detected-uuid>`;
+GRANT USE SCHEMA ON SCHEMA vikcbl_payer_dev.cobol_migration TO `<auto-detected-uuid>`;
+GRANT READ VOLUME ON VOLUME vikcbl_payer_dev.cobol_migration.legacy_cobol TO `<auto-detected-uuid>`;
+GRANT SELECT ON CATALOG vikcbl_payer_dev TO `<auto-detected-uuid>`;
+GRANT USE CATALOG ON CATALOG vikcbl_payer_analyst_dev TO `<auto-detected-uuid>`;
+GRANT SELECT ON CATALOG vikcbl_payer_analyst_dev TO `<auto-detected-uuid>`;
 ```
 
 **💡 Tip:** Run `./show_grant_commands.sh` anytime to regenerate these commands with your app's UUID.
@@ -92,10 +94,10 @@ GRANT SELECT ON CATALOG payer_dev TO `<auto-detected-uuid>`;
 
 Open the app URL shown in the deploy output:
 ```
-https://sas-converter-<workspace-id>.azuredatabricksapps.com
+https://vikcbl-cobol-converter-<workspace-id>.azuredatabricksapps.com
 ```
 
-**✅ You're Done!** Start converting SAS code to PySpark/SQL.
+**✅ You're Done!** Start converting COBOL code to PySpark/SQL.
 
 ---
 
@@ -130,13 +132,13 @@ This deploys `.assistant_instructions.md` to your workspace at:
 
 1. Open any Databricks notebook
 2. Click the **Assistant** icon
-3. Paste your SAS code
-4. Ask: *"Convert this to PySpark"*
+3. Paste your COBOL code
+4. Ask: *"Convert this COBOL to PySpark"*
 5. Assistant uses your custom instructions automatically
 
 **Benefits:**
 - Context-aware conversions based on your patterns
-- Interactive Q&A about SAS → PySpark/SQL
+- Interactive Q&A about COBOL → PySpark/SQL
 - Works across all notebooks in your workspace
 
 [Learn more about custom instructions](https://docs.databricks.com/en/notebooks/assistant-tips.html#customize-assistant-responses)
@@ -149,7 +151,7 @@ pip install -r dashboard/requirements.txt
 
 # Run locally
 cd dashboard
-streamlit run sas_converter_app.py
+streamlit run cobol_converter_app.py
 ```
 
 ---
@@ -157,29 +159,38 @@ streamlit run sas_converter_app.py
 ## Project Structure
 
 ```
-SAS-work/
+cobol_converter/
 ├── dashboard/                           # Main application
-│   ├── sas_converter_app.py            # Entry point (1,318 lines)
+│   ├── cobol_converter_app.py          # Entry point (1,350+ lines)
 │   ├── file_handler.py                 # File I/O utilities
 │   ├── utils.py                        # Validation & formatting
 │   ├── app.yaml                        # Databricks app config
 │   └── config/
-│       └── .assistant_instructions.md  # LLM instructions (1,706 lines)
+│       └── .assistant_instructions.md  # LLM instructions (1,800+ lines)
 │
 ├── config/
 │   └── .assistant_instructions.md      # Source of truth (edit here!)
 │
 ├── notebooks/                          # Demo notebooks
-│   ├── 00c_setup_with_inline_data.py  # Setup script
-│   ├── 01-09_*.py                     # Example conversions
+│   ├── 00c_setup_cobol_demo.py        # Setup script with data generation
+│   ├── 01_cobol_hedis_pyspark.py      # HEDIS demo
+│   ├── 02_cobol_claims_pyspark.py     # Claims demo
+│   ├── 03_cobol_member_sql.py         # Member demo
+│   ├── 04_cobol_risk_pyspark.py       # Risk adjustment demo
+│   ├── 05_cobol_provider_sql.py       # Provider demo
 │   └── README.md
 │
-├── legacy_sas/                        # Sample SAS files
-│   └── *.sas
+├── legacy_cobol/                       # Sample COBOL files
+│   ├── hedis_reports.cbl
+│   ├── claims_analytics.cbl
+│   ├── member_analytics.cbl
+│   ├── risk_adjustment.cbl
+│   ├── provider_analytics.cbl
+│   └── prior_auth_analytics.cbl
 │
-├── databricks.yml                     # Databricks Asset Bundle config
-├── setup_databricks_assistant.sh     # Setup Databricks Assistant with instructions
-└── deploy_streamlit_app.sh           # Deploy Streamlit app to Databricks Apps
+├── databricks.yml                      # Databricks Asset Bundle config
+├── setup_databricks_assistant.sh      # Full setup: catalogs + data + app
+└── deploy_streamlit_app.sh            # Quick deploy: app only
 
 ```
 
@@ -187,14 +198,14 @@ SAS-work/
 
 **Use the Streamlit App when:**
 - You want a self-service UI for business users
-- You need batch conversions of multiple SAS files
+- You need batch conversions of multiple COBOL files
 - You want consistent, automated output
 - You're demoing to customers or stakeholders
 
 **Use Databricks Assistant when:**
 - You're actively developing in notebooks
 - You want AI help while coding (iterative approach)
-- You need to ask questions about SAS patterns
+- You need to ask questions about COBOL patterns
 - You prefer manual control over each conversion step
 
 **Use both!** Many teams deploy the Streamlit app for business users while developers use Databricks Assistant for hands-on work.
@@ -232,7 +243,7 @@ The converter follows 12 critical rules validated over 3 days of production test
 Uses Claude Sonnet 4.5 configured in `dashboard/app.yaml`:
 
 ```yaml
-- databricks-claude-sonnet-4-5         # Best quality for SAS conversions
+- databricks-claude-sonnet-4-5         # Best quality for COBOL conversions
 ```
 
 ### 4. Databricks Assistant Integration
@@ -249,13 +260,13 @@ This deploys `.assistant_instructions.md` to your workspace folder (`/Workspace/
 **Usage in Notebooks:**
 1. Open any Databricks notebook
 2. Use Databricks Assistant (AI helper)
-3. Paste your SAS code and ask: "Convert this to PySpark"
+3. Paste your COBOL code and ask: "Convert this COBOL to PySpark"
 4. Assistant uses your custom instructions automatically
 
 **Benefits:**
-- Context-aware conversions based on your patterns
-- Interactive Q&A about SAS → PySpark/SQL
-- Learns from your custom rules and domain knowledge
+- Context-aware conversions based on your COBOL patterns
+- Interactive Q&A about COBOL → PySpark/SQL
+- Handles COBOL-specific constructs (REDEFINES, OCCURS, COMP-3, etc.)
 - Works across all notebooks in your workspace
 
 [Learn more about custom instructions](https://docs.databricks.com/aws/en/notebooks/assistant-tips#customize-assistant-responses-by-adding-instructions)
@@ -273,8 +284,8 @@ This deploys `.assistant_instructions.md` to your workspace folder (`/Workspace/
 
 ## Usage Example
 
-1. **Upload SAS File**: Click "Browse files" or paste code
-2. **Configure**: Set source/target catalogs and schemas
+1. **Upload COBOL File**: Click "Browse files" or paste COBOL code
+2. **Configure**: Set source/target catalogs and schemas (defaults to vikcbl_payer_dev)
 3. **Select Mode**: Choose PySpark or SQL output
 4. **Convert**: Click "Convert to Databricks"
 5. **Download**: Save as `.py` notebook file
@@ -332,23 +343,25 @@ After deploying the Streamlit app, you need to grant it access to Unity Catalog 
 
 Example output (your UUID will be different):
 ```sql
--- Grant permissions to app service principal
-GRANT USE CATALOG ON CATALOG payer_dev TO `e9dfbf80-9204-43f4-9758-41b204defc1c`;
-GRANT USE SCHEMA ON SCHEMA payer_dev.sas_migration TO `e9dfbf80-9204-43f4-9758-41b204defc1c`;
-GRANT READ VOLUME ON VOLUME payer_dev.sas_migration.legacy_sas TO `e9dfbf80-9204-43f4-9758-41b204defc1c`;
-GRANT SELECT ON CATALOG payer_dev TO `e9dfbf80-9204-43f4-9758-41b204defc1c`;
+-- Grant permissions to app service principal (example - your UUID will differ)
+GRANT USE CATALOG ON CATALOG vikcbl_payer_dev TO `f929495c-0f31-476b-b554-29af04b27179`;
+GRANT USE SCHEMA ON SCHEMA vikcbl_payer_dev.cobol_migration TO `f929495c-0f31-476b-b554-29af04b27179`;
+GRANT READ VOLUME ON VOLUME vikcbl_payer_dev.cobol_migration.legacy_cobol TO `f929495c-0f31-476b-b554-29af04b27179`;
+GRANT SELECT ON CATALOG vikcbl_payer_dev TO `f929495c-0f31-476b-b554-29af04b27179`;
+GRANT USE CATALOG ON CATALOG vikcbl_payer_analyst_dev TO `f929495c-0f31-476b-b554-29af04b27179`;
+GRANT SELECT ON CATALOG vikcbl_payer_analyst_dev TO `f929495c-0f31-476b-b554-29af04b27179`;
 ```
 
-**Why manual?** Unity Catalog permission grants require specific admin privileges that may not be available to automation scripts. This one-time step (takes 30 seconds) ensures the app can access volumes containing SAS files.
+**Why manual?** Unity Catalog permission grants require specific admin privileges that may not be available to automation scripts. This one-time step (takes 30 seconds) ensures the app can access volumes containing COBOL files.
 
-**Verify:** Check **Catalog Explorer** → **payer_dev.sas_migration.legacy_sas** → **Permissions** tab to confirm the app has access.
+**Verify:** Check **Catalog Explorer** → **vikcbl_payer_dev.cobol_migration.legacy_cobol** → **Permissions** tab to confirm the app has access.
 
 ### Via Databricks CLI (Manual)
 
 ```bash
 # For Streamlit app
-databricks bundle deploy --profile DEFAULT_azure
-databricks apps deploy sas-converter --profile DEFAULT_azure
+databricks bundle deploy --var="user_prefix=vikcbl" --profile DEFAULT_azure
+databricks apps deploy vikcbl-cobol-converter --profile DEFAULT_azure
 
 # For Databricks Assistant
 databricks workspace import --overwrite \
@@ -377,9 +390,11 @@ env:
 ### Customization
 
 See `config/.assistant_instructions.md` for:
-- Conversion patterns
+- COBOL → PySpark conversion patterns
 - Healthcare payer-specific rules
-- SAS function mappings
+- COBOL data type mappings (COMP-3, PIC V, REDEFINES)
+- 15 critical COBOL conversion gotchas
+- Data quality validation patterns
 - Error handling strategies
 
 ---
@@ -408,10 +423,10 @@ After deployment:
 
 ```bash
 # Check app logs
-databricks apps logs sas-converter --profile DEFAULT_azure
+databricks apps logs vikcbl-cobol-converter --profile DEFAULT_azure
 
 # Check bundle status
-databricks bundle validate
+databricks bundle validate --var="user_prefix=vikcbl"
 ```
 
 ---
