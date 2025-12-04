@@ -95,13 +95,20 @@ echo ""
 if databricks bundle run setup_cobol_demo --profile $PROFILE; then
     echo ""
     
+    # Detect the actual catalog name that was created (with dynamic user prefix)
+    # Extract first name from email and add "cbl" suffix
+    USER_PREFIX=$(echo "$DATABRICKS_USER" | cut -d'@' -f1 | cut -d'.' -f1 | tr '[:upper:]' '[:lower:]')
+    ACTUAL_SOURCE_CATALOG="${USER_PREFIX}cbl_payer_dev"
+    
     # Upload COBOL files to volume
     echo "📦 Uploading COBOL files to volume..."
+    echo "   Target: $ACTUAL_SOURCE_CATALOG.cobol_migration.legacy_cobol"
     cd "$(dirname "$0")/legacy_cobol"
     UPLOAD_COUNT=0
     for file in *.cbl; do
-        if databricks fs cp "$file" "dbfs:/Volumes/payer_dev/cobol_migration/legacy_cobol/$file" --profile $PROFILE --overwrite 2>/dev/null; then
+        if databricks fs cp "$file" "dbfs:/Volumes/$ACTUAL_SOURCE_CATALOG/cobol_migration/legacy_cobol/$file" --profile $PROFILE --overwrite 2>/dev/null; then
             UPLOAD_COUNT=$((UPLOAD_COUNT + 1))
+            echo "   ✓ $file"
         fi
     done
     echo "✅ Uploaded $UPLOAD_COUNT COBOL files to volume"
@@ -113,8 +120,8 @@ if databricks bundle run setup_cobol_demo --profile $PROFILE; then
     echo "╚════════════════════════════════════════════════════════════════╝"
     echo ""
     echo "📊 Catalogs created:"
-    echo "   ✅ payer_dev (source - with 42,000 rows)"
-    echo "   ✅ payer_analyst_dev (target)"
+    echo "   ✅ $ACTUAL_SOURCE_CATALOG (source - with 42,000 rows)"
+    echo "   ✅ ${USER_PREFIX}cbl_payer_analyst_dev (target)"
     echo ""
     echo "📂 Schemas created:"
     echo "   Source: claims_bronze, claims_silver, analytics_gold, cobol_migration"
@@ -122,7 +129,7 @@ if databricks bundle run setup_cobol_demo --profile $PROFILE; then
     echo "           provider_analytics, member_analytics, prior_auth_analytics"
     echo ""
     echo "📦 Volume created:"
-    echo "   ✅ payer_dev.cobol_migration.legacy_cobol (with $UPLOAD_COUNT COBOL files)"
+    echo "   ✅ $ACTUAL_SOURCE_CATALOG.cobol_migration.legacy_cobol (with $UPLOAD_COUNT COBOL files)"
     echo ""
     echo "🎬 Ready to demo!"
     echo ""
