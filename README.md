@@ -1,5 +1,11 @@
 # COBOL to Databricks Converter
 
+> **⚠️ PERSONAL PROJECT DISCLAIMER**  
+> This is a personal learning and demonstration project created for educational purposes.  
+> It is NOT affiliated with any employer or organization.  
+> This project should NOT be used in production without proper testing, compliance review, and legal approval.  
+> No warranties expressed or implied. Use at your own risk.
+
 A production-ready Streamlit application that converts legacy COBOL mainframe code to PySpark or Databricks SQL using Databricks Foundation Models (Claude Sonnet 4.5).
 
 ![Version](https://img.shields.io/badge/version-2.4-blue)
